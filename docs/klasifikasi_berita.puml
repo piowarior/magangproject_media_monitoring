@@ -1,0 +1,65 @@
+@startuml
+title Alur RSS → AI Sentiment (Hybrid Model Buatan Sendiri)
+
+start
+
+:RSS News Data (Judul, Isi, Source);
+
+:Preprocessing Text;
+note right
+- lowercase
+- cleaning
+- stopword removal
+- stemming
+end note
+
+:Feature Engineering;
+note right
+- TF-IDF
+- Word2Vec / FastText
+- IndoBERT embedding
+end note
+
+fork
+
+  :Model A - Lexicon Based;
+  note right
+  Kamus kata:
+  positif / negatif scoring
+  end note
+
+fork again
+
+  :Model B - ML Classifier;
+  note right
+  SVM / Naive Bayes / Logistic Regression
+  end note
+
+fork again
+
+  :Model C - Deep Learning;
+  note right
+  LSTM / BiLSTM / IndoBERT fine-tuned
+  end note
+
+end fork
+
+:Ensemble Engine;
+note right
+Gabungkan semua hasil model:
+Weighted scoring / voting
+end note
+
+:Final Sentiment Output;
+note right
+Positive / Neutral / Negative
+Confidence score
+end note
+
+:Save to Database;
+
+:Dashboard Analytics;
+
+stop
+
+@enduml

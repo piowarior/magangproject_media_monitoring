@@ -1,0 +1,25 @@
+@startuml
+title Alur Keyword - RSS Crawling (Sampai Siap AI)
+
+actor User
+
+rectangle "Mobile App (Flutter)" {
+    User --> (Input Keyword)
+    (Input Keyword) --> (Klik Analisis)
+}
+
+rectangle "Backend API (Laravel)" {
+    (Klik Analisis) --> (Simpan Keyword)
+    (Simpan Keyword) --> (Trigger Crawler Service)
+}
+
+rectangle "Crawler System" {
+    (Trigger Crawler Service) --> (Fetch Google News RSS)
+    (Fetch Google News RSS) --> (Parse RSS Data)
+    (Parse RSS Data) --> (Filter & Cleaning Data)
+    (Filter & Cleaning Data) --> (News Dataset Ready)
+}
+
+(News Dataset Ready) --> (READY FOR AI ANALYSIS)
+
+@enduml
