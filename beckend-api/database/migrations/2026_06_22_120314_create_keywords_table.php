@@ -13,10 +13,18 @@ return new class extends Migration
     {
         Schema::create('keywords', function (Blueprint $table) {
             $table->id();
-            $table->string('keyword');
-            $table->string('category')->nullable(); // politik, infrastruktur dll
-            $table->boolean('is_active')->default(true);
+            $table->foreignID('user_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+            $table->string('keyword_text');
+            $table->string('region_scope')
+                ->default('indonesia');
+            $table->enum('status',[
+                'active','inactive'
+            ])->default('active');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
