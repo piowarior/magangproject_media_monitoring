@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('keyword_runs', function (Blueprint $table) {
             $table->id();
+            $table->foreigenId('keyword_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('finished_at')->nullable();
+            $table->enum('status', ['procesing', 'done', 'erorr'])->default('processing');
             $table->timestamps();
         });
     }

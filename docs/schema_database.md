@@ -1,13 +1,3 @@
-Oke, ini aku kunci supaya **tidak berubah-ubah lagi**.
-
-Kita pakai ini sebagai:
-
-> **FINAL DATABASE BASELINE (PHASE 1 – FIXED DESIGN)**
-
-Aku tidak akan redesign lagi. Ini versi stabil untuk kamu lanjut implementasi Laravel + Filament.
-
----
-
 # 🧱 DATABASE MEDIA MONITORING AI (FINAL PHASE 1)
 
 ---

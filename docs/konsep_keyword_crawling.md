@@ -120,8 +120,8 @@ READY FOR AI PROCESSING
 
 # 🧠 OUTPUT FINAL DARI ALUR INI
 
-Di titik akhir ini kamu sudah punya:
-
+Di titik akhir ini kamu sudah punya: 
+ 
 ✔ Keyword dari user
 ✔ Data RSS dari Google News
 ✔ Data sudah dibersihkan
