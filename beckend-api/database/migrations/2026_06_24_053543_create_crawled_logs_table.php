@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('crawled_logs', function (Blueprint $table) {
             $table->id();
+            $table->foreigenId('keyword_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->enum('status',['success','fail']);
+            $table->integer('total_fetched')->default(0);
+            $table->integer('total_saved')->default(0);
+            $table->integer('erorr_message')->nullable();
             $table->timestamps();
         });
     }

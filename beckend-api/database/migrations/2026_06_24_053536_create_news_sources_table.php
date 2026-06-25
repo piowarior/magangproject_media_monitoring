@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('news_sources', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('url');
+            $table->enum('type', ['RSS', 'API', 'Web Scraping'])->default('RSS');
             $table->timestamps();
         });
     }

@@ -13,9 +13,22 @@ return new class extends Migration
     {
         Schema::create('sentiments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('news_id')->constrained()->onDelete('cascade');
-            $table->enum('sentiment', ['positive', 'neutral', 'negative']);
-            $table->float('score')->nullable();
+
+            $table->foreignId('news_id')
+                ->unique()
+                ->constrained()
+                ->restrictOnDelete();
+
+            $table->enum('final_sentiment', [
+                'positive',
+                'neutral',
+                'negative'
+            ]);
+
+            $table->float('confidence_score');
+
+            $table->string('model_version');
+
             $table->timestamps();
         });
     }

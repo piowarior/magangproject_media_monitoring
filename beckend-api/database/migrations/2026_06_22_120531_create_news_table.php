@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
+            $table->foreigenId('keyword_id')
+                ->constrained()
+                ->nullOnDelete();
+            $table->foreigenId('source_id')
+                ->constraid('news_sources')
+                ->nullOnDelete();
             $table->string('title');
-            $table->text('content')->nullable();
-            $table->string('source');
-            $table->string('url')->unique();
-            $table->dateTime('published_at');
+            $table->LongText('content')->nullable();
+            $table->text('url');
+            $table->timestamp('published_at')->nullable();
+            $table->string('hash')->unique();
             $table->timestamps();
         });
     }
