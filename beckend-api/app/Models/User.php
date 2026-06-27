@@ -30,4 +30,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function keywords()
+    {
+        return $this->belongsToMany(
+            Keyword::class,
+            'user_keywords'
+        );
+    }
 }

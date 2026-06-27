@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('crawled_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreigenId('keyword_id')
+            $table->foreignId('keyword_id')
                 ->constrained()
                 ->cascadeOnDelete();
             $table->enum('status',['success','fail']);

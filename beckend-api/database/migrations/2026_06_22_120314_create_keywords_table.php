@@ -13,10 +13,6 @@ return new class extends Migration
     {
         Schema::create('keywords', function (Blueprint $table) {
             $table->id();
-            $table->foreignID('user_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
             $table->string('keyword_text');
             $table->string('region_scope')
                 ->default('indonesia');

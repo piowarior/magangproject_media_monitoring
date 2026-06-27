@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('keyword_runs', function (Blueprint $table) {
+        Schema::create('user_keywords', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
             $table->foreignId('keyword_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->timestamp('started_at')->nullable();
-            $table->timestamp('finished_at')->nullable();
-            $table->enum('status', ['procesing', 'done', 'erorr'])->default('processing');
             $table->timestamps();
+            $table->unique(['user_id','keyword_id']);
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('keyword_runs');
+        Schema::dropIfExists('user_keywords');
     }
 };
