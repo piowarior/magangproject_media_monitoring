@@ -17,10 +17,10 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
             $table->foreignId('source_id')
-                ->constraid('news_sources')
+                ->constrained('news_sources') // FIX: was ->constraid()
                 ->nullOnDelete();
             $table->string('title');
-            $table->LongText('content')->nullable();
+            $table->longText('content')->nullable();
             $table->text('url');
             $table->timestamp('published_at')->nullable();
             $table->string('hash')->unique();
