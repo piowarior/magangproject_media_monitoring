@@ -16,10 +16,11 @@ return new class extends Migration
             $table->foreignId('keyword_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->enum('status',['success','fail']);
+            $table->enum('status', ['success', 'fail']);
             $table->integer('total_fetched')->default(0);
             $table->integer('total_saved')->default(0);
-            $table->integer('erorr_message')->nullable();
+            // FIX: was integer type + typo 'erorr_message' → text 'error_message'
+            $table->text('error_message')->nullable();
             $table->timestamps();
         });
     }
