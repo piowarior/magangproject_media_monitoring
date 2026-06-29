@@ -21,37 +21,26 @@ class KeywordResource extends Resource
 {
     protected static ?string $model = Keyword::class;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMagnifyingGlass;
-    protected static ?string $navigationLabel = 'Keyword Monitor';
+    protected static ?string $navigationLabel = 'Keywords';
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): string { return 'Keyword Management'; }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Forms\Components\Section::make('Detail Keyword')
-                ->columns(2)
-                ->schema([
-                    Forms\Components\TextInput::make('keyword_text')
-                        ->label('Kata Kunci')
-                        ->required()
-                        ->maxLength(255)
-                        ->placeholder('contoh: DPRD Banten, Anggaran Banten 2026')
-                        ->columnSpanFull(),
+            Forms\Components\Section::make('Detail Keyword')->columns(2)->schema([
+                Forms\Components\TextInput::make('keyword_text')
+                    ->label('Kata Kunci')->required()->maxLength(255)
+                    ->placeholder('contoh: DPRD Banten')->columnSpanFull(),
 
-                    Forms\Components\TextInput::make('region_scope')
-                        ->label('Cakupan Wilayah')
-                        ->default('Banten')
-                        ->required()
-                        ->maxLength(100),
+                Forms\Components\TextInput::make('region_scope')
+                    ->label('Cakupan Wilayah')->default('Banten')->required(),
 
-                    Forms\Components\Select::make('status')
-                        ->label('Status')
-                        ->options([
-                            'active'   => 'Aktif',
-                            'inactive' => 'Nonaktif',
-                        ])
-                        ->default('active')
-                        ->required(),
-                ]),
+                Forms\Components\Select::make('status')->label('Status')
+                    ->options(['active' => 'Aktif', 'inactive' => 'Nonaktif'])
+                    ->default('active')->required(),
+            ]),
         ]);
     }
 
@@ -60,44 +49,26 @@ class KeywordResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('keyword_text')
-                    ->label('Kata Kunci')
-                    ->searchable()
-                    ->sortable()
-                    ->weight('bold'),
-
+                    ->label('Kata Kunci')->searchable()->sortable()->weight('bold'),
                 Tables\Columns\TextColumn::make('region_scope')
-                    ->label('Wilayah')
-                    ->badge()
-                    ->color('info'),
-
-                Tables\Columns\BadgeColumn::make('status')
-                    ->label('Status')
-                    ->colors([
-                        'success' => 'active',
-                        'danger'  => 'inactive',
-                    ])
+                    ->label('Wilayah')->badge()->color('info'),
+                Tables\Columns\TextColumn::make('status')->label('Status')->badge()
+                    ->color(fn ($state) => $state === 'active' ? 'success' : 'danger')
                     ->formatStateUsing(fn ($state) => $state === 'active' ? 'Aktif' : 'Nonaktif'),
-
-                Tables\Columns\TextColumn::make('news_count')
-                    ->label('Jml Berita')
-                    ->counts('news')
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat')
-                    ->dateTime('d M Y')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('news_count')->label('Berita')
+                    ->counts('news')->sortable()->alignCenter(),
+                Tables\Columns\TextColumn::make('creator.name')->label('Dibuat Oleh')
+                    ->sortable()->placeholder('—'),
+                Tables\Columns\TextColumn::make('updated_at')->label('Update')
+                    ->dateTime('d M Y')->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
-                    ->label('Status')
-                    ->options([
-                        'active'   => 'Aktif',
-                        'inactive' => 'Nonaktif',
-                    ]),
+                Tables\Filters\SelectFilter::make('status')->options([
+                    'active' => 'Aktif', 'inactive' => 'Nonaktif',
+                ]),
             ])
             ->actions([
-                Action::make('toggle_status')
+                Action::make('toggle')
                     ->label(fn ($record) => $record->status === 'active' ? 'Nonaktifkan' : 'Aktifkan')
                     ->icon(fn ($record) => $record->status === 'active' ? Heroicon::OutlinedPause : Heroicon::OutlinedPlay)
                     ->color(fn ($record) => $record->status === 'active' ? 'warning' : 'success')
@@ -110,10 +81,7 @@ class KeywordResource extends Resource
             ->defaultSort('created_at', 'desc');
     }
 
-    public static function getRelations(): array
-    {
-        return [];
-    }
+    public static function getRelations(): array { return []; }
 
     public static function getPages(): array
     {

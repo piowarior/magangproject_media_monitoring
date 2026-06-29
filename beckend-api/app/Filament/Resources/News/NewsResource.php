@@ -17,10 +17,10 @@ class NewsResource extends Resource
 {
     protected static ?string $model = News::class;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
-    protected static ?string $navigationLabel = 'Berita';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationLabel = 'News';
+    protected static ?int $navigationSort = 1;
 
-    // Read-only — berita masuk dari crawling, bukan input manual
+    public static function getNavigationGroup(): string { return 'News Center'; }
     public static function canCreate(): bool { return false; }
 
     public static function form(Schema $schema): Schema
@@ -33,28 +33,23 @@ class NewsResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Judul Berita')
-                    ->searchable()
-                    ->limit(60)
-                    ->tooltip(fn ($record) => $record->title),
+                    ->label('Judul Berita')->searchable()->limit(55)
+                    ->tooltip(fn ($record) => $record->title)->weight('medium'),
 
                 Tables\Columns\TextColumn::make('source.name')
-                    ->label('Sumber')
-                    ->badge()
-                    ->sortable(),
+                    ->label('Sumber')->badge()->sortable(),
 
                 Tables\Columns\TextColumn::make('keyword.keyword_text')
-                    ->label('Keyword')
-                    ->badge()
-                    ->color('info'),
+                    ->label('Keyword')->badge()->color('info'),
 
-                Tables\Columns\BadgeColumn::make('sentiment.final_sentiment')
-                    ->label('Sentimen')
-                    ->colors([
-                        'success' => 'positive',
-                        'danger'  => 'negative',
-                        'warning' => 'neutral',
-                    ])
+                Tables\Columns\TextColumn::make('sentiment.final_sentiment')
+                    ->label('Sentimen')->badge()
+                    ->color(fn ($state) => match ($state) {
+                        'positive' => 'success',
+                        'negative' => 'danger',
+                        'neutral'  => 'warning',
+                        default    => 'gray',
+                    })
                     ->formatStateUsing(fn ($state) => match ($state) {
                         'positive' => 'Positif',
                         'negative' => 'Negatif',
@@ -62,19 +57,31 @@ class NewsResource extends Resource
                         default    => 'Pending',
                     }),
 
+                Tables\Columns\IconColumn::make('is_duplicate')
+                    ->label('Duplikat')->boolean()->alignCenter()
+                    ->falseIcon(null),
+
+                Tables\Columns\IconColumn::make('is_relevant')
+                    ->label('Relevan')->boolean()->alignCenter(),
+
                 Tables\Columns\TextColumn::make('published_at')
-                    ->label('Tanggal')
-                    ->dateTime('d M Y')
-                    ->sortable(),
+                    ->label('Terbit')->dateTime('d M Y')->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('keyword')
-                    ->label('Keyword')
-                    ->relationship('keyword', 'keyword_text'),
-
+                    ->label('Keyword')->relationship('keyword', 'keyword_text'),
                 Tables\Filters\SelectFilter::make('source')
-                    ->label('Sumber Berita')
-                    ->relationship('source', 'name'),
+                    ->label('Sumber')->relationship('source', 'name'),
+                Tables\Filters\SelectFilter::make('sentiment')
+                    ->label('Sentimen')->options([
+                        'positive' => 'Positif',
+                        'neutral'  => 'Netral',
+                        'negative' => 'Negatif',
+                    ]),
+                Tables\Filters\TernaryFilter::make('is_duplicate')
+                    ->label('Duplikat'),
+                Tables\Filters\TernaryFilter::make('is_relevant')
+                    ->label('Relevan'),
             ])
             ->actions([
                 Action::make('visit')
@@ -82,14 +89,24 @@ class NewsResource extends Resource
                     ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                     ->url(fn ($record) => $record->url)
                     ->openUrlInNewTab(),
+                Action::make('mark_irrelevant')
+                    ->label('Tandai Tidak Relevan')
+                    ->icon(Heroicon::OutlinedXCircle)
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(fn ($record) => $record->update(['is_relevant' => false]))
+                    ->visible(fn ($record) => $record->is_relevant),
+                Action::make('mark_relevant')
+                    ->label('Tandai Relevan')
+                    ->icon(Heroicon::OutlinedCheckCircle)
+                    ->color('success')
+                    ->action(fn ($record) => $record->update(['is_relevant' => true]))
+                    ->visible(fn ($record) => ! $record->is_relevant),
             ])
             ->defaultSort('published_at', 'desc');
     }
 
-    public static function getRelations(): array
-    {
-        return [];
-    }
+    public static function getRelations(): array { return []; }
 
     public static function getPages(): array
     {
